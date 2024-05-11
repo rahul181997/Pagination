@@ -23,15 +23,15 @@ function Pagination() {
     }
   };
 
-  const handlePrevious = () => {
-    if (page > 1) {
-      setPage(page - 1);
-    }
-  };
-
   const handleNext = () => {
     if (page < Math.ceil(employees.length / 10)) {
       setPage(page + 1);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (page > 1) {
+      setPage(page - 1);
     }
   };
 
