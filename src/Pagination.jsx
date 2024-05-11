@@ -61,9 +61,9 @@ function Pagination() {
         </tbody>
       </table>
       <div className="pagination">
-        <button onClick={handlePrevious} disabled={page === 1}>Previous</button>
+        <button onClick={handlePrevious}>Previous</button>
         <span>Page {page}</span>
-        <button onClick={handleNext} disabled={page === Math.ceil(employees.length / 10) || employees.length === 0}>Next</button>
+        <button onClick={handleNext}>Next</button>
       </div>
     </div>
   );
