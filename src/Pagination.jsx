@@ -4,12 +4,14 @@ import './Pagination.css';
 function Pagination() {
   const [employees, setEmployees] = useState([]);
   const [page, setPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false); // Add loading state
 
   useEffect(() => {
     fetchEmployees();
   }, [page]);
 
   const fetchEmployees = async () => {
+    setIsLoading(true); // Set loading state to true
     try {
       const response = await fetch('https://geektrust.s3-ap-southeast-1.amazonaws.com/adminui-problem/members.json');
       if (!response.ok) {
@@ -20,6 +22,8 @@ function Pagination() {
     } catch (error) {
       alert('Failed to fetch data');
       console.error('Error fetching data:', error);
+    } finally {
+      setIsLoading(false); // Set loading state to false
     }
   };
 
@@ -67,6 +71,7 @@ function Pagination() {
         <span>{page}</span>
         <button onClick={handleNext}>Next</button>
       </div>
+      {isLoading && <div>Loading...</div>} {/* Add loading indicator */}
     </div>
   );
 }
