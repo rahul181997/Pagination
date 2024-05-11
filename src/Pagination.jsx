@@ -24,14 +24,16 @@ function Pagination() {
   };
 
   const handleNext = () => {
-    if (page < Math.ceil(employees.length / 10)) {
-      setPage(page + 1);
+    const nextPage = page + 1;
+    if (nextPage <= Math.ceil(employees.length / 10)) {
+      setPage(nextPage);
     }
   };
 
   const handlePrevious = () => {
-    if (page > 1) {
-      setPage(page - 1);
+    const prevPage = page - 1;
+    if (prevPage >= 1) {
+      setPage(prevPage);
     }
   };
 
@@ -62,7 +64,7 @@ function Pagination() {
       </table>
       <div className="pagination">
         <button onClick={handlePrevious}>Previous</button>
-        <span> {page} </span>
+        <span>{page}</span>
         <button onClick={handleNext}>Next</button>
       </div>
     </div>
