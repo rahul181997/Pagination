@@ -62,7 +62,7 @@ function Pagination() {
       </table>
       <div className="pagination">
         <button onClick={handlePrevious}>Previous</button>
-        <span>Page {page}</span>
+        <span> {page} </span>
         <button onClick={handleNext}>Next</button>
       </div>
     </div>
