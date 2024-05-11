@@ -68,7 +68,7 @@ function Pagination() {
       </table>
       <div className="pagination">
         <button onClick={handlePrevious}>Previous</button>
-        <span>{page}</span>
+        <button>{page}</button>
         <button onClick={handleNext}>Next</button>
       </div>
       {isLoading && <div>Loading...</div>} {/* Add loading indicator */}
