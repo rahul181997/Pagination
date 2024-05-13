@@ -37,9 +37,17 @@ function Pagination() {
 
   const getApiData = () => {
     fetch(API_URL)
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) {
+          throw new Error('Failed to fetch data');
+        }
+        return res.json();
+      })
       .then(data => setUser(data))
-      .catch(err => console.error("failed to fetch data"));
+      .catch(err => {
+        console.error(err);
+        alert('Failed to fetch data. Please try again later.');
+      });
   }
 
   const filterData = useCallback((min, max) => {
@@ -76,7 +84,7 @@ function Pagination() {
     <div className='main'>
       <h1>Employee Data Table</h1>
       <Table emps={emplist} />
-      <div>
+      <div className='pagination-container'>
         <button onClick={handlePrevious}>Previous</button>
         <button>{currentPage}</button>
         <button onClick={handleNext}>Next</button>
