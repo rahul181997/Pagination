@@ -63,7 +63,7 @@ function Pagination() {
   }, [user, filterData]);
 
   const handleNext = () => {
-    if (currentPage < Math.floor(user.length % 10) - 1) {
+    if (user && user.length && currentPage < Math.floor(user.length % 10) - 1) {
       setCurrentPage(pre => pre + 1);
       let start = 10 * currentPage + 1;
       let end = 10 * (currentPage + 1);
@@ -72,7 +72,7 @@ function Pagination() {
   }
 
   const handlePrevious = () => {
-    if (currentPage > 1) {
+    if (user && user.length && currentPage > 1) {
       setCurrentPage(pre => pre - 1);
       let start = (10 * (currentPage - 2)) + 1;
       let end = 10 * (currentPage - 1);
