@@ -35,7 +35,7 @@ function Pagination() {
   const [currentPage, setCurrentPage] = useState(1);
   const API_URL = 'https://geektrust.s3-ap-southeast-1.amazonaws.com/adminui-problem/members.json';
 
-  const getApiData = () => {
+  const getApiData = useCallback(() => {
     fetch(API_URL)
       .then(res => {
         if (!res.ok) {
@@ -48,7 +48,7 @@ function Pagination() {
         console.error(err);
         alert('Failed to fetch data. Please try again later.');
       });
-  }
+  }, [API_URL]);
 
   const filterData = useCallback((min, max) => {
     setemplist(user.filter(val => Number(val.id) >= min && Number(val.id) <= max));
@@ -56,7 +56,7 @@ function Pagination() {
 
   useEffect(() => {
     getApiData();
-  }, []);
+  }, [getApiData]);
 
   useEffect(() => {
     filterData(1, 10);
