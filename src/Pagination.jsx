@@ -14,16 +14,14 @@ function Table({ emps }) {
         </tr>
       </thead>
       <tbody>
-        {emps?.map(emp => {
-          return (
-            <tr key={emp.id}>
-              <td align='left'>{emp.id}</td>
-              <td align='left'>{emp.name}</td>
-              <td align='left'>{emp.email}</td>
-              <td align='left'>{emp.role}</td>
-            </tr>
-          );
-        })}
+        {emps?.map(emp => (
+          <tr key={emp.id}>
+            <td align='left'>{emp.id}</td>
+            <td align='left'>{emp.name}</td>
+            <td align='left'>{emp.email}</td>
+            <td align='left'>{emp.role}</td>
+          </tr>
+        ))}
       </tbody>
     </table>
   );
@@ -33,51 +31,53 @@ function Pagination() {
   const [user, setUser] = useState([]);
   const [emplist, setemplist] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
   const API_URL = 'https://geektrust.s3-ap-southeast-1.amazonaws.com/adminui-problem/members.json';
 
-  const getApiData = useCallback(() => {
-    fetch(API_URL)
-      .then(res => {
-        if (!res.ok) {
-          throw new Error('Failed to fetch data');
-        }
-        return res.json();
-      })
-      .then(data => setUser(data))
-      .catch(err => {
-        console.error(err);
-        alert('Failed to fetch data. Please try again later.');
-      });
-  }, [API_URL]);
+  const fetchData = useCallback(async () => {
+    try {
+      const response = await fetch(API_URL);
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+      const data = await response.json();
+      setUser(data);
+    } catch (error) {
+      console.error(error);
+      alert('Failed to fetch data. Please try again later.');
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
-  const filterData = useCallback((min, max) => {
-    setemplist(user.filter(val => Number(val.id) >= min && Number(val.id) <= max));
-  }, [user]);
+  const paginateData = useCallback(() => {
+    const start = (currentPage - 1) * 10;
+    const end = currentPage * 10;
+    setemplist(user.slice(start, end));
+  }, [currentPage, user]);
 
   useEffect(() => {
-    getApiData();
-  }, [getApiData]);
+    fetchData();
+  }, [fetchData]);
 
   useEffect(() => {
-    filterData(1, 10);
-  }, [user, filterData]);
+    paginateData();
+  }, [paginateData]);
 
   const handleNext = () => {
-    if (user && user.length && currentPage < Math.ceil(user.length / 10)) {
+    if (currentPage < Math.ceil(user.length / 10)) {
       setCurrentPage(prevPage => prevPage + 1);
-      let start = 10 * currentPage + 1;
-      let end = Math.min(10 * currentPage + 10, user.length);
-      filterData(start, end);
     }
   }
 
   const handlePrevious = () => {
     if (currentPage > 1) {
       setCurrentPage(prevPage => prevPage - 1);
-      let start = (10 * (currentPage - 2)) + 1;
-      let end = 10 * (currentPage - 1);
-      filterData(start, end);
     }
+  }
+
+  if (isLoading) {
+    return <div>Loading...</div>;
   }
 
   return (
