@@ -86,7 +86,7 @@ function Pagination() {
       <Table emps={emplist} />
       <div className='pagination-container'>
         <button onClick={handlePrevious}>Previous</button>
-        <button>{currentPage}</button>
+        <div>{currentPage}</div>
         <button onClick={handleNext}>Next</button>
       </div>
     </div>
