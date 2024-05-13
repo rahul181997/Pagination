@@ -63,10 +63,10 @@ function Pagination() {
   }, [user, filterData]);
 
   const handleNext = () => {
-    if (user.length && currentPage < Math.floor(user.length / 10)) {
+    if (user && user.length && currentPage < Math.ceil(user.length / 10)) {
       setCurrentPage(prevPage => prevPage + 1);
       let start = 10 * currentPage + 1;
-      let end = 10 * (currentPage + 1);
+      let end = Math.min(10 * currentPage + 10, user.length);
       filterData(start, end);
     }
   }
