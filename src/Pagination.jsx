@@ -1,77 +1,86 @@
-import React, { useState, useEffect } from 'react';
-import './Pagination.css';
+// Pagination.jsx
+import React, { useState, useEffect, useCallback } from 'react';
+import "./Pagination.css";
+
+function Table({ emps }) {
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th align='left'>ID</th>
+          <th align='left'>Name</th>
+          <th align='left'>Email</th>
+          <th align='left'>Role</th>
+        </tr>
+      </thead>
+      <tbody>
+        {emps?.map(emp => {
+          return (
+            <tr key={emp.id}>
+              <td align='left'>{emp.id}</td>
+              <td align='left'>{emp.name}</td>
+              <td align='left'>{emp.email}</td>
+              <td align='left'>{emp.role}</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  );
+}
 
 function Pagination() {
-  const [employees, setEmployees] = useState([]);
-  const [page, setPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(false); // Add loading state
+  const [user, setUser] = useState([]);
+  const [emplist, setemplist] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const API_URL = 'https://geektrust.s3-ap-southeast-1.amazonaws.com/adminui-problem/members.json';
+
+  const getApiData = () => {
+    fetch(API_URL)
+      .then(res => res.json())
+      .then(data => setUser(data))
+      .catch(err => console.error("failed to fetch data"));
+  }
+
+  const filterData = useCallback((min, max) => {
+    setemplist(user.filter(val => Number(val.id) >= min && Number(val.id) <= max));
+  }, [user]);
 
   useEffect(() => {
-    fetchEmployees();
-  }, [page]);
+    getApiData();
+  }, []);
 
-  const fetchEmployees = async () => {
-    setIsLoading(true); // Set loading state to true
-    try {
-      const response = await fetch('https://geektrust.s3-ap-southeast-1.amazonaws.com/adminui-problem/members.json');
-      if (!response.ok) {
-        throw new Error('Failed to fetch data');
-      }
-      const data = await response.json();
-      setEmployees(data);
-    } catch (error) {
-      alert('Failed to fetch data');
-      console.error('Error fetching data:', error);
-    } finally {
-      setIsLoading(false); // Set loading state to false
-    }
-  };
+  useEffect(() => {
+    filterData(1, 10);
+  }, [user, filterData]);
 
   const handleNext = () => {
-    const nextPage = page + 1;
-    if (nextPage <= Math.ceil(employees.length / 10)) {
-      setPage(nextPage);
+    if (currentPage < Math.floor(user.length % 10) - 1) {
+      setCurrentPage(pre => pre + 1);
+      let start = 10 * currentPage + 1;
+      let end = 10 * (currentPage + 1);
+      filterData(start, end);
     }
-  };
+  }
 
   const handlePrevious = () => {
-    const prevPage = page - 1;
-    if (prevPage >= 1) {
-      setPage(prevPage);
+    if (currentPage > 1) {
+      setCurrentPage(pre => pre - 1);
+      let start = (10 * (currentPage - 2)) + 1;
+      let end = 10 * (currentPage - 1);
+      filterData(start, end);
     }
-  };
-
-  const startIndex = (page - 1) * 10;
-  const endIndex = startIndex + 10;
-  const currentPageEmployees = employees.slice(startIndex, endIndex);
+  }
 
   return (
-    <div className="container">
-      <h1>Employee Data</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Role</th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentPageEmployees.map(employee => (
-            <tr key={employee.id}>
-              <td>{employee.name}</td>
-              <td>{employee.email}</td>
-              <td>{employee.role}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <div className="pagination">
+    <div className='main'>
+      <h1>Employee Data Table</h1>
+      <Table emps={emplist} />
+      <div>
         <button onClick={handlePrevious}>Previous</button>
-        <button>{page}</button>
+        <button>{currentPage}</button>
         <button onClick={handleNext}>Next</button>
       </div>
-      {isLoading && <div>Loading...</div>} {/* Add loading indicator */}
     </div>
   );
 }
